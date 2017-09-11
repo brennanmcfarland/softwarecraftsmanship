@@ -1,5 +1,7 @@
 package com.company;
 
+import java.util.Optional;
+
 public final class LocationalToken {
 
     private final Token token;
@@ -10,14 +12,19 @@ public final class LocationalToken {
         this.location = location;
     }
 
-    //TODO: delegate to Token object methods to get token type and ancillary data?
-    //TODO: refactor and unit tests
-
     public Token getToken() {
         return token;
     }
 
     public int getLocation() {
         return location;
+    }
+
+    public Token.Type getTokenType() {
+        return token.getType();
+    }
+
+    public Optional<String> getTokenData() {
+        return token.getData();
     }
 }
