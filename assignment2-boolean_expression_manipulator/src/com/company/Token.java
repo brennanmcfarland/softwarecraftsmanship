@@ -1,10 +1,7 @@
 package com.company;
 
-import javax.swing.text.html.Option;
-import java.util.Collection;
 import java.util.Optional;
 import java.util.Map;
-import java.util.Set;
 
 public final class Token {
 
@@ -20,8 +17,8 @@ public final class Token {
         BINARYOP("\\+|-|\\*|/", true),
         WHITESPACE("\\s+", false);
 
-        private final String pattern;
-        private final Boolean hasData;
+        private final String pattern; //the token's regex pattern
+        private final Boolean hasData; //whether the token has additional associated data
 
         Type(String pattern, Boolean hasData) {
             this.pattern = pattern;
@@ -37,6 +34,7 @@ public final class Token {
         }
     }
 
+    //for building new instances of Token
     private static class Builder {
 
         private final Type type;
@@ -51,13 +49,12 @@ public final class Token {
             return new Token(type, data);
         }
 
-        //TODO: data is an optional, so fix it to not check for null & use optional syntax instead, in all instances
         @Override
         public boolean equals(Object o) {
             if (this == o) return true;
             if (o == null || getClass() != o.getClass()) return false;
 
-            Builder builder = (Builder) o;
+            Builder builder = (Builder)o;
 
             if (type != builder.type) return false;
             return data != null ? data.equals(builder.data) : builder.data == null;
@@ -73,26 +70,18 @@ public final class Token {
 
     private final Type type;
     private final Optional<String> data;
-    private static Map<Builder, Token> tokenMap;
+    private static Map<Builder, Token> tokenMap; //maps builders to their associated tokens
 
-    //TODO: type and data should acccept actual values
     private Token(Type type, Optional<String> data) {
         this.type = type;
         this.data = data;
     }
 
-    public Type getType() {
-        return type;
-    }
+    public Type getType() { return type; }
 
-    public Optional<String> getData() {
-        return data;
-    }
+    public Optional<String> getData() { return data; }
 
     public static Token of(Type type, String data) {
-        //TODO:
-        //return token with these params if one already exists,otherwise make a new one and return it
-        //if token type doesn't support data, ignore it
 
         //guard clause; if the appropriate builder doesn't exist, create it and return the build
         Builder requestedBuilder = new Builder(type, Optional.ofNullable(data));

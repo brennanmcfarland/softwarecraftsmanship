@@ -20,11 +20,7 @@ public final class LocationalToken {
         return location;
     }
 
-    public Token.Type getTokenType() {
-        return token.getType();
-    }
+    public Token.Type getTokenType() { return token.getType(); }
 
-    public Optional<String> getTokenData() {
-        return token.getData();
-    }
+    public Optional<String> getTokenData() { return token.getData(); }
 }
