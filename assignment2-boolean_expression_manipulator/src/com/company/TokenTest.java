@@ -1,12 +1,9 @@
 package com.company;
 
-import jdk.nashorn.internal.parser.TokenType;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Assertions;
 
 import java.lang.reflect.Method;
-
-import static org.junit.jupiter.api.Assertions.*;
+import java.util.Optional;
 
 class TokenTest {
 
@@ -53,24 +50,37 @@ class TokenTest {
     void getTypeTestCase(Token.Type correctType, String correctData) {
         TestToken.createTestToken(correctType, correctData);
         Assertions.assertEquals(correctType, TestToken.getTestToken().getType());
-        System.out.println("passed test case {" + correctType + ", " + correctData + "}");
+        printTestCaseReport("getType", correctType, correctData);
     }
 
     @org.junit.jupiter.api.Test
     void getData() {
+        getDataTestCase(Token.Type.OR, "more test data");
+        getDataTestCase(Token.Type.ID, "   ");
+        getDataTestCase(Token.Type.WHITESPACE, null);
+    }
+
+    void getDataTestCase(Token.Type correctType, String correctData) {
+        TestToken.createTestToken(correctType, correctData);
+        Assertions.assertEquals(Optional.ofNullable(correctData), TestToken.getTestToken().getData());
+        printTestCaseReport("getData", correctType, correctData);
     }
 
     @org.junit.jupiter.api.Test
     void of() {
+        ofTestCase(Token.Type.NOT, "some test data");
+        ofTestCase(Token.Type.OPEN, "");
+        ofTestCase(Token.Type.BINARYOP, null);
+        ofTestCase(null, null);
     }
 
-    @org.junit.jupiter.api.Test
-    void equals() {
+    void ofTestCase(Token.Type correctType, String correctData) {
+        Token testToken = Token.of(correctType, correctData);
+        Assertions.assertEquals(correctType, testToken.getType());
+        printTestCaseReport("of", correctType, correctData);
     }
 
-    //different from naming convention because conflicts with object.toString() return type otherwise
-    @org.junit.jupiter.api.Test
-    public void testToString() {
+    void printTestCaseReport(String methodName, Token.Type correctType, String correctData) {
+        System.out.println("Passed " + methodName + "() test case {" + correctType + ", " + correctData + "}");
     }
-
 }
