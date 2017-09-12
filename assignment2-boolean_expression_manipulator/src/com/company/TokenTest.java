@@ -1,5 +1,6 @@
 package com.company;
 
+import jdk.nashorn.internal.parser.TokenType;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Assertions;
 
@@ -43,10 +44,16 @@ class TokenTest {
 
     @org.junit.jupiter.api.Test
     void getType() {
-        Token.Type correctType = Token.Type.NOT;
-        String correctData = "testdata";
+        getTypeTestCase(Token.Type.NOT, "testdata");
+        getTypeTestCase(null, "testdata");
+        getTypeTestCase(Token.Type.AND, null);
+        getTypeTestCase(null, null);
+    }
+
+    void getTypeTestCase(Token.Type correctType, String correctData) {
         TestToken.createTestToken(correctType, correctData);
-            Assertions.assertEquals(correctType, TestToken.getTestToken().getType());
+        Assertions.assertEquals(correctType, TestToken.getTestToken().getType());
+        System.out.println("passed test case {" + correctType + ", " + correctData + "}");
     }
 
     @org.junit.jupiter.api.Test

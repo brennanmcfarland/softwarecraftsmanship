@@ -1,5 +1,6 @@
 package com.company;
 
+import java.util.Hashtable;
 import java.util.Optional;
 import java.util.Map;
 
@@ -77,6 +78,19 @@ public final class Token {
         this.data = data;
     }
 
+    //if the map is not instantiated, make it a hashtable (may need to change for later assignments)
+    private static void addToTokenMap(Builder newBuilder, Token newToken) {
+        if(tokenMap == null) {
+            tokenMap = new Hashtable<Builder, Token>();
+        }
+        tokenMap.put(newBuilder, newToken);
+    }
+
+    //includes null tokenMap check
+    private static boolean tokenMapContainsKey(Builder requestedBuilder) {
+        return (tokenMap != null) ? tokenMap.containsKey(requestedBuilder) : false;
+    }
+
     public Type getType() { return type; }
 
     public Optional<String> getData() { return data; }
@@ -85,8 +99,8 @@ public final class Token {
 
         //guard clause; if the appropriate builder doesn't exist, create it and return the build
         Builder requestedBuilder = new Builder(type, Optional.ofNullable(data));
-        if(!tokenMap.containsKey(requestedBuilder))
-            tokenMap.put(requestedBuilder, requestedBuilder.build());
+        if(!tokenMapContainsKey(requestedBuilder))
+            addToTokenMap(requestedBuilder, requestedBuilder.build());
 
         //guard clause; if a builder exists but the token doesn't match, build it
         Token requestedToken = new Token(type, Optional.ofNullable(data));
