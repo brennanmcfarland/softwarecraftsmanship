@@ -52,12 +52,12 @@ public final class Token {
 
         @Override
         public boolean equals(Object o) {
-            if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
+            if (this == o) { return true; }
+            if (o == null || getClass() != o.getClass()) { return false; }
 
             Builder builder = (Builder)o;
 
-            if (type != builder.type) return false;
+            if (type != builder.type) { return false; }
             return data != null ? data.equals(builder.data) : builder.data == null;
         }
 
@@ -82,8 +82,9 @@ public final class Token {
 
         //guard clause; if the appropriate builder doesn't exist, create it and return the build
         Builder requestedBuilder = new Builder(type, Optional.ofNullable(data));
-        if(!tokenMap.containsKey(requestedBuilder))
+        if(!tokenMap.containsKey(requestedBuilder)) {
             tokenMap.put(requestedBuilder, requestedBuilder.build());
+        }
 
         //nominal case; if the builder and token match, return the token
         return tokenMap.get(requestedBuilder);
@@ -97,11 +98,11 @@ public final class Token {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (o == null || getClass() != o.getClass()) { return false; }
 
         Token token = (Token) o;
 
-        if (type != token.type) return false;
+        if (type != token.type) { return false; }
         return data != null ? data.equals(token.data) : token.data == null;
     }
 
