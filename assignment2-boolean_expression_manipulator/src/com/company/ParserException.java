@@ -29,15 +29,15 @@ public final class ParserException extends Exception {
         this.location = -1;
     }
 
-    public static void verify(Optional<LocationalToken> token) {
+    public static void verify(Optional<LocationalToken> token) throws ParserException {
         if(!token.isPresent()) {
             throw new ParserException(ErrorCode.TOKEN_EXPECTED);
         }
     }
 
-    public static void verifyEnd(Optional<LocationalToken> token) {
+    public static void verifyEnd(Optional<LocationalToken> token) throws ParserException {
         if(token.isPresent()) {
-            throw new ParserException(token.get().getLocation(), ErrorCode.TRAILING_INPUT);
+            throw new ParserException(token.get(), ErrorCode.TRAILING_INPUT);
         }
     }
 
