@@ -1,5 +1,7 @@
 package com.company;
 
+import javax.swing.text.html.Option;
+import javax.xml.stream.Location;
 import java.util.Iterator;
 import java.util.Optional;
 import java.util.Set;
@@ -33,18 +35,21 @@ public class Lexer {
         return new LocationalToken(nextToken, tokenMatcher.start()); //TODO: is this what the assignment means?
     }
 
+    //TODO: refactor this for readability
     public Optional<LocationalToken> nextValid(Set<Token.Type> validTypes, Set<Token.Type> invalidTypes)
             throws ParserException {
 
-        
-        //TODO: If the
-        //TODO: method finds a token of an invalid type, it throws an INVALID_TOKEN
-        //TODO: exception along with the invalid token. If the method finds a token
-        //TODO: that is neither valid nor invalid, the method ignores it and keeps
-        //TODO: scanning the input in search of the next token. For example, if
-        //TODO: WHITESPACE is neither valid or invalid, all input white spaces would
-        //TODO: be skipped. If the method reaches the end of input without finding
-        //TODO: another valid token, an empty optional is returned.
+        if(!hasNext()) { return Optional.empty(); }
+        LocationalToken nextToken;
+        do {
+            nextToken = next();
+        } while(validTypes.contains(nextToken.getTokenType()) || invalidTypes.contains(nextToken.getTokenType()));
+        if(invalidTypes.contains(nextToken.getTokenType())) {
+            throw new ParserException(nextToken, ParserException.ErrorCode.INVALID_TOKEN);
+        }
+
+        //otherwise it is a valid token
+        return Optional.of(nextToken);
     }
 
 }
