@@ -20,10 +20,12 @@ public final class Token {
 
         private final String pattern; //the token's regex pattern
         private final Boolean hasData; //whether the token has additional associated data
+        private boolean isComplex;
 
-        Type(String pattern, Boolean hasData) {
+        Type(String pattern, Boolean hasData, boolean isComplex) {
             this.pattern = pattern;
             this.hasData = hasData;
+            this.isComplex = isComplex;
         }
 
         public String getPattern() {
@@ -33,6 +35,8 @@ public final class Token {
         public Boolean getHasData() {
             return hasData;
         }
+
+        public boolean getIsComplex() { return isComplex; }
     }
 
     //for building new instances of Token

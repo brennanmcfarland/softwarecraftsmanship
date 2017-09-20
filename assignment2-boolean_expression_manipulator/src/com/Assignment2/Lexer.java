@@ -6,6 +6,8 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+
+//TODO: refactor, write unit tests and TEST IT
 public class Lexer {
 
     private static Pattern tokenPatterns;
@@ -15,22 +17,33 @@ public class Lexer {
         tokenMatcher = tokenPatterns.matcher(input);
     }
 
+    //TODO: refactor for readability
     static {
-        tokenPatterns = Pattern.compile("the regexes from Token.Types"); //TODO: fix this
+        Token.Type[] types = Token.Type.values();
+        StringBuilder typesRegexString = new StringBuilder();
+        for(type : types) {
+            typesRegexString.append(type.getPattern());
+        }
+        tokenPatterns = Pattern.compile(typesRegexString.toString());
     }
 
+    //also moves the matcher index forward if it is not at the end
     public Boolean hasNext() {
-        //find keeps track of the where it left off, so no need to save the index
         return tokenMatcher.find();
     }
 
     public LocationalToken next() throws ParserException {
-        if(!hasNext()) { throw new ParserException(ParserException.ErrorCode.TOKEN_EXPECTED); }
-        String nextTokenString = tokenMatcher.group();
-        Token.Type nextTokenType; //TODO: set this based on nextTokenString
-        String nextTokenData; //TODO: is this necessary?  if not don't initialize with it
-        Token nextToken = Token.of(nextTokenType, nextTokenData);
-        return new LocationalToken(nextToken, tokenMatcher.start()); //TODO: is this what the assignment means?
+        String nextTokenString = null;
+        Token.Type[] types = Token.Type.values();
+        for(type : types) {
+            nextTokenString = tokenMatcher.group(type.getPattern());
+            if(nextTokenString != null) {
+                Token.Type nextTokenType = new Token.Type(nextTokenString, type.getHasData(), type.getIsComplex());
+                Token nextToken = Token.of(nextTokenType, nextTokenString);
+                return new LocationalToken(nextToken, tokenMatcher.start());
+            }
+        }
+        throw new ParserException(ParserException.ErrorCode.TOKEN_EXPECTED);
     }
 
     //TODO: refactor for readability
@@ -39,9 +52,9 @@ public class Lexer {
 
         if(!hasNext()) { return Optional.empty(); }
         LocationalToken nextToken;
-        do {
+        while(validTypes.contains(nextToken.getTokenType()) || invalidTypes.contains(nextToken.getTokenType())) {
             nextToken = next();
-        } while(validTypes.contains(nextToken.getTokenType()) || invalidTypes.contains(nextToken.getTokenType()));
+        }
         if(invalidTypes.contains(nextToken.getTokenType())) {
             throw new ParserException(nextToken, ParserException.ErrorCode.INVALID_TOKEN);
         }
