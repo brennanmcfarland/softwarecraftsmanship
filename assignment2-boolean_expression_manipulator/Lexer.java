@@ -1,6 +1,5 @@
 package com.company;
 
-import java.util.Iterator;
 import java.util.Optional;
 import java.util.Set;
 import java.util.regex.Matcher;
@@ -17,11 +16,9 @@ public class Lexer {
         tokenMatcher = tokenPatterns.matcher(input);
     }
 
-    //TODO: refactor for readability
     static {
-        Token.Type[] types = Token.Type.values();
         StringBuilder typesRegexString = new StringBuilder();
-        for(type : types) {
+        for(Token.Type type : Token.Type.values()) {
             typesRegexString.append(type.getPattern());
         }
         tokenPatterns = Pattern.compile(typesRegexString.toString());
@@ -34,27 +31,24 @@ public class Lexer {
 
     public LocationalToken next() throws ParserException {
         String nextTokenString = null;
-        Token.Type[] types = Token.Type.values();
-        for(type : types) {
+        for(Token.Type type : Token.Type.values()) {
             nextTokenString = tokenMatcher.group(type.getPattern());
             if(nextTokenString != null) {
-                Token.Type nextTokenType = new Token.Type(nextTokenString, type.getHasData(), type.getIsComplex());
-                Token nextToken = Token.of(nextTokenType, nextTokenString);
+                Token nextToken = Token.of(type, nextTokenString);
                 return new LocationalToken(nextToken, tokenMatcher.start());
             }
         }
         throw new ParserException(ParserException.ErrorCode.TOKEN_EXPECTED);
     }
 
-    //TODO: refactor for readability
     public Optional<LocationalToken> nextValid(Set<Token.Type> validTypes, Set<Token.Type> invalidTypes)
             throws ParserException {
 
         if(!hasNext()) { return Optional.empty(); }
         LocationalToken nextToken;
-        while(validTypes.contains(nextToken.getTokenType()) || invalidTypes.contains(nextToken.getTokenType())) {
+        do {
             nextToken = next();
-        }
+        } while(validTypes.contains(nextToken.getTokenType()) || invalidTypes.contains(nextToken.getTokenType()));
         if(invalidTypes.contains(nextToken.getTokenType())) {
             throw new ParserException(nextToken, ParserException.ErrorCode.INVALID_TOKEN);
         }

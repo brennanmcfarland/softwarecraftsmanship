@@ -8,15 +8,15 @@ public final class Token {
 
     public enum Type {
 
-        NOT("not", false),
-        AND("and", false),
-        OR("or", false),
-        OPEN("\\(", false),
-        CLOSE("\\)", false),
-        ID("[a-z]+", true),
-        NUMBER("\\-?[0-9]+", true),
-        BINARYOP("\\+|-|\\*|/", true),
-        WHITESPACE("\\s+", false);
+        NOT("not", false, false),
+        AND("and", false, true),
+        OR("or", false, true),
+        OPEN("\\(", false, false),
+        CLOSE("\\)", false, false),
+        ID("[a-z]+", true, false),
+        NUMBER("\\-?[0-9]+", true, false),
+        BINARYOP("\\+|-|\\*|/", true, false),
+        WHITESPACE("\\s+", false, false);
 
         private final String pattern; //the token's regex pattern
         private final Boolean hasData; //whether the token has additional associated data

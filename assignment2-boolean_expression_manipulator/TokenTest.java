@@ -1,7 +1,6 @@
 package com.company;
 
 import org.junit.jupiter.api.Assertions;
-
 import java.lang.reflect.Method;
 import java.util.Optional;
 
@@ -27,7 +26,7 @@ class TokenTest {
             defaultCorrectType = correctType;
             defaultCorrectData = correctData;
             try {
-                Class tokenClass = Class.forName("com.company.Token");
+                Class tokenClass = Class.forName("Token");
                 Method tokenOfMethod = tokenClass.getMethod("of", Token.Type.class, String.class);
                 return testTokenInstance = (Token) tokenOfMethod.invoke(null, correctType, correctData);
             }
