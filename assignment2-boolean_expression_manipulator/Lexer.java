@@ -6,7 +6,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 
-//TODO: refactor, write unit tests and TEST IT
 public class Lexer {
 
     private static Pattern tokenPatterns;
