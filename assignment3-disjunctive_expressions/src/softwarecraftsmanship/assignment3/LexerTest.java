@@ -3,8 +3,6 @@ package softwarecraftsmanship.assignment3;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import java.awt.List;
-import java.lang.reflect.Array;
 import java.util.*;
 
 class LexerTest {

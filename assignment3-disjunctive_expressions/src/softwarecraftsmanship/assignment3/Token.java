@@ -7,24 +7,26 @@ import java.util.Map;
 public final class Token {
     public enum Type {
 
-        NOT("not", false, false),
-        AND("and", false, true),
-        OR("or", false, true),
-        OPEN("\\(", false, false),
-        CLOSE("\\)", false, false),
-        ID("[a-z]+", true, false),
-        NUMBER("\\-?[0-9]+", true, false),
-        BINARYOP("\\+|-|\\*|/", true, false),
-        WHITESPACE("\\s+", false, false);
+        NOT("not", false, false, Optional.empty()),
+        AND("and", false, true, Optional.of(ParserException.ErrorCode.AND_EXPECTED)),
+        OR("or", false, true, Optional.empty()),
+        OPEN("\\(", false, false, Optional.of(ParserException.ErrorCode.OPEN_EXPECTED)),
+        CLOSE("\\)", false, false, Optional.of(ParserException.ErrorCode.CLOSE_EXPECTED)),
+        ID("[a-z]+", true, false, Optional.of(ParserException.ErrorCode.ID_EXPECTED)),
+        NUMBER("\\-?[0-9]+", true, false, Optional.empty()),
+        BINARYOP("\\+|-|\\*|/", true, false, Optional.empty()),
+        WHITESPACE("\\s+", false, false, Optional.empty());
 
         private final String pattern; //the token's regex pattern
         private final Boolean hasData; //whether the token has additional associated data
         private boolean isComplex;
+        private Optional<ParserException.ErrorCode> errorCode;
 
-        Type(String pattern, Boolean hasData, boolean isComplex) {
+        Type(String pattern, Boolean hasData, boolean isComplex, Optional<ParserException.ErrorCode> errorCode) {
             this.pattern = pattern;
             this.hasData = hasData;
             this.isComplex = isComplex;
+            this.errorCode = errorCode;
         }
 
         public String getPattern() {
@@ -36,6 +38,8 @@ public final class Token {
         }
 
         public boolean getIsComplex() { return isComplex; }
+
+        public Optional<ParserException.ErrorCode> getErrorCode() { return errorCode; }
     }
 
     //for building new instances of Token

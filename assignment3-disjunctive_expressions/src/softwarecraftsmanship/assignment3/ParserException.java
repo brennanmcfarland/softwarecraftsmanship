@@ -1,5 +1,6 @@
 package softwarecraftsmanship.assignment3;
 
+import javax.xml.stream.Location;
 import java.util.Optional;
 
 public final class ParserException extends Exception {
@@ -9,7 +10,11 @@ public final class ParserException extends Exception {
     public enum ErrorCode {
         TOKEN_EXPECTED,
         INVALID_TOKEN,
-        TRAILING_INPUT;
+        TRAILING_INPUT,
+        AND_EXPECTED,
+        OPEN_EXPECTED,
+        CLOSE_EXPECTED,
+        ID_EXPECTED
     }
 
     private final ErrorCode errorCode;
@@ -35,6 +40,15 @@ public final class ParserException extends Exception {
         }
     }
 
+    public final static void verify(Token.Type expectedType, LocationalToken token) throws ParserException {
+        if(!token.getToken().getType().equals(expectedType)) {
+            Optional<ErrorCode> errorCode = expectedType.getErrorCode();
+            if(errorCode.isPresent()) {
+                throw new ParserException(token, expectedType.getErrorCode().get());
+            }
+            throw new ParserException(token, ErrorCode.TOKEN_EXPECTED);
+        }
+    }
     public static void verifyEnd(Optional<LocationalToken> token) throws ParserException {
         if(token.isPresent()) {
             throw new ParserException(token.get(), ErrorCode.TRAILING_INPUT);
