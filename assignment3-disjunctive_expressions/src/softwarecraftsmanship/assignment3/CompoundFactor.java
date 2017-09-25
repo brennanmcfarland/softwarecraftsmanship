@@ -1,9 +1,8 @@
 package softwarecraftsmanship.assignment3;
 
-import javax.swing.text.html.Option;
 import java.util.*;
 
-public class CompoundFactor {
+public class CompoundFactor implements Factor {
 
     private final Identifier leftExpression;
     private final Identifier rightExpression;
