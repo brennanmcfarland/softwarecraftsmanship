@@ -13,8 +13,7 @@ public final class Identifier implements Factor {
             if(!token.getToken().getType().equals(Token.Type.ID)) {
                 throw new ParserException(token, ParserException.ErrorCode.ID_EXPECTED);
             }
-            //TODO: return the corresponding identifier
-            return null;
+            return new Identifier(token.getTokenData().get());
         }
     }
 

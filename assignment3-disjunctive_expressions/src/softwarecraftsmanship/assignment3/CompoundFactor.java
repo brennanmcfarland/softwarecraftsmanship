@@ -4,37 +4,40 @@ import java.util.*;
 
 public class CompoundFactor implements Factor {
 
-    private final Identifier leftExpression;
-    private final Identifier rightExpression;
+    private final DisjunctiveExpression leftExpression;
+    private final DisjunctiveExpression rightExpression;
 
-    private CompoundFactor(Identifier leftExpression, Identifier rightExpression) {
+    private CompoundFactor(DisjunctiveExpression leftExpression, DisjunctiveExpression rightExpression) {
         this.leftExpression = leftExpression;
         this.rightExpression = rightExpression;
     }
 
     public static final class Builder {
         public static final CompoundFactor build(LocationalToken token, DisjunctiveLexer lexer) throws ParserException {
-            LinkedList<Token.Type> expectedTypeSequence = new LinkedList<Token.Type>(Arrays.asList(
+            LinkedList<Token.Type> expectedOperatorSequence = new LinkedList<Token.Type>(Arrays.asList(
                     Token.Type.OPEN,
-                    Token.Type.ID,
                     Token.Type.AND,
-                    Token.Type.ID,
                     Token.Type.CLOSE
             ));
-            ArrayList<Identifier> expressions = new ArrayList<Identifier>(2);
+
+            ArrayList<DisjunctiveExpression> expressions = new ArrayList<DisjunctiveExpression>(2);
             Optional<LocationalToken> currentTokenOptional = Optional.of(token);
-            do {
+            for(int expectedTypeIndex=0; expectedTypeIndex<expectedOperatorSequence.size(); expectedTypeIndex++) {
                 LocationalToken currentToken = currentTokenOptional.get();
-                ParserException.verify(expectedTypeSequence.removeFirst(), currentToken);
-                if(currentToken.getToken().getType().equals(Token.Type.ID)) {
-                    expressions.add(Identifier.Builder.build(currentToken));
+                if(expectedTypeIndex%2 == 0) {
+                    ParserException.verify(expectedOperatorSequence.removeFirst(), currentToken);
                 }
-            } while(!(currentTokenOptional = lexer.nextValid()).equals(Optional.empty()));
+                else {
+                    expressions.add(DisjunctiveExpression.Builder.build(currentToken, lexer));
+                }
+            }
+            
             return buildFromList(expressions);
         }
 
         //TODO: is there a better way to do this that doesn't involve directly referencing list indices?
-        private static final CompoundFactor buildFromList(List<Identifier> expressions) throws ParserException {
+        private static final CompoundFactor buildFromList(List<DisjunctiveExpression> expressions)
+                throws ParserException {
             if(expressions.size() != 2) { throw new ParserException(ParserException.ErrorCode.ID_EXPECTED); }
             return new CompoundFactor(expressions.get(0), expressions.get(1));
         }
