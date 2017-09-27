@@ -1,6 +1,5 @@
 package softwarecraftsmanship.assignment3;
 
-import javax.xml.stream.Location;
 import java.util.Optional;
 
 public final class ParserException extends Exception {

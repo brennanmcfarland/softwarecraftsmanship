@@ -12,11 +12,9 @@ public final class DisjunctiveExpression {
         this.positive = positive;
     }
 
-    //TODO: may need to break this up into separate methods
     public static final class Builder {
         public static final DisjunctiveExpression build(LocationalToken token, DisjunctiveLexer lexer)
                 throws ParserException {
-
             //process optional NOT
             boolean positive = true;
             if(token.getTokenType().equals(Token.Type.NOT)) {
@@ -27,10 +25,8 @@ public final class DisjunctiveExpression {
                 }
                 token = nextTokenOptional.get();
             }
-
             //process the factor
             Factor factor = buildFactor(token, lexer);
-
             return new DisjunctiveExpression(factor, positive);
         }
 

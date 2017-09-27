@@ -53,7 +53,6 @@ public class Lexer {
                 throw new ParserException(nextToken, ParserException.ErrorCode.INVALID_TOKEN);
             }
             else if(validTypes.contains(nextToken.getTokenType())) {
-                System.out.println("returning " + nextToken.getToken().getType());
                 return Optional.of(nextToken);
             }
         }

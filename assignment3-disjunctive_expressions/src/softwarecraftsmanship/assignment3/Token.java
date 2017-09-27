@@ -106,11 +106,11 @@ public final class Token {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) { return false; }
+        return fieldsEqual((Token)o);
+    }
 
-        Token token = (Token) o;
-
-        if (type != token.type) { return false; }
-        return data != null ? data.equals(token.data) : token.data == null;
+    private boolean fieldsEqual(Token token) {
+        return type == token.type && (data != null ? data.equals(token.data) : token.data == null);
     }
 
     @Override

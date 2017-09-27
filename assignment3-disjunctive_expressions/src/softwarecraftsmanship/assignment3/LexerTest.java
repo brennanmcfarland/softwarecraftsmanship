@@ -2,7 +2,6 @@ package softwarecraftsmanship.assignment3;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-
 import java.util.*;
 
 class LexerTest {
@@ -39,20 +38,16 @@ class LexerTest {
     }
 
     @Test
-    void next() {
+    void next() throws ParserException {
         Lexer testLexer = new Lexer("this and (that or 3)");
         Token.Type[] correctTokenTypes = {Token.Type.ID, Token.Type.WHITESPACE, Token.Type.AND, Token.Type.WHITESPACE,
             Token.Type.OPEN, Token.Type.ID, Token.Type.WHITESPACE, Token.Type.OR, Token.Type.WHITESPACE,
             Token.Type.NUMBER, Token.Type.CLOSE};
         int[] correctTokenLocations = {0,4,5,8,9,10,14,15,17,18,19};
         ArrayList<LocationalToken> testLocationalTokens = new ArrayList<LocationalToken>();
-        try{
-            while(testLexer.hasNext())
-            {
-                testLocationalTokens.add(testLexer.next());
-            }
-        } catch(ParserException parserException) {
-            throw new AssertionError();
+        while(testLexer.hasNext())
+        {
+            testLocationalTokens.add(testLexer.next());
         }
 
         for(int token=0; token<correctTokenTypes.length; token++) {
@@ -84,12 +79,11 @@ class LexerTest {
 
         for(int token=0; token<correctTypes.length; token++) {
             Assertions.assertEquals(testValidTokens.get(token).getToken().getType(), correctTypes[token]);
-            System.out.println(testValidTokens.get(token).getToken().getType() + " " + correctTypes[token]);
         }
     }
 
     @Test
-    void estimateComplexity() {
+    void estimateComplexity() throws ParserException {
         inputs = new String[]{
                 null,
                 "",
@@ -112,19 +106,15 @@ class LexerTest {
         }
     }
 
-    void estimateComplexityCase(String input, int correctOutput) {
+    void estimateComplexityCase(String input, int correctOutput) throws ParserException {
         int complexity = 0;
         Lexer testLexer = new Lexer(input);
         Optional<LocationalToken> nextValidToken;
-        try {
-            while(true) {
-                nextValidToken = testLexer.nextValid(new HashSet(Arrays.asList(Token.Type.values())),
-                        new HashSet());
-                if(nextValidToken.equals(Optional.empty())) { break; }
-                if(nextValidToken.get().getToken().getType().getIsComplex()) { complexity++; }
-            }
-        } catch (ParserException parserException) {
-            throw new AssertionError();
+        while(true) {
+            nextValidToken = testLexer.nextValid(new HashSet(Arrays.asList(Token.Type.values())),
+                    new HashSet());
+            if(nextValidToken.equals(Optional.empty())) { break; }
+            if(nextValidToken.get().getToken().getType().getIsComplex()) { complexity++; }
         }
         Assertions.assertEquals(complexity, correctOutput);
     }
