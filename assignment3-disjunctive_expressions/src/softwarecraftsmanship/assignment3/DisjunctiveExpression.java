@@ -20,9 +20,7 @@ public final class DisjunctiveExpression {
             if(token.getTokenType().equals(Token.Type.NOT)) {
                 positive = false;
                 Optional<LocationalToken> nextTokenOptional = lexer.nextValid();
-                if(nextTokenOptional.equals(Optional.empty())) {
-                    throw new ParserException(token, ParserException.ErrorCode.TOKEN_EXPECTED);
-                }
+                ParserException.verify(nextTokenOptional);
                 token = nextTokenOptional.get();
             }
             //process the factor
@@ -31,14 +29,11 @@ public final class DisjunctiveExpression {
         }
 
         private static final Factor buildFactor(LocationalToken token, DisjunctiveLexer lexer) throws ParserException {
-            //try to parse it as an identifier
-            try{
+            //if it's an identifier, try to build it as such, otherwise try to build it as a compound factor
+            if(token.getTokenType().equals(Token.Type.ID)) {
                 return Identifier.Builder.build(token);
-            } catch (ParserException identifierParseException) {
-                if(!identifierParseException.getErrorCode().equals(ParserException.ErrorCode.ID_EXPECTED)) {
-                    throw identifierParseException;
-                }
-                //if that fails, it must be a compound factor or erroneous input
+            }
+            else {
                 return buildCompoundFactor(token, lexer);
             }
         }

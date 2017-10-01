@@ -97,7 +97,6 @@ public final class Token {
         return tokenMap.get(requestedBuilder);
     }
 
-
     public Type getType() { return type; }
 
     public Optional<String> getData() { return data; }

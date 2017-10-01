@@ -12,6 +12,7 @@ class DisjunctiveLexerTest {
         nextValidCase("and");
         nextValidCase("and what");
         Assertions.assertThrows(ParserException.class, () -> nextValidCase("this or that"));
+        Assertions.assertThrows(ParserException.class, () -> nextValidCase("(one and 3)"));
     }
 
     void nextValidCase(String input) throws ParserException {

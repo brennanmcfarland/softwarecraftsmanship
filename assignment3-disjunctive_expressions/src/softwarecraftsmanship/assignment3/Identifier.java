@@ -10,9 +10,7 @@ public final class Identifier implements Factor {
 
     public static final class Builder {
         public static final Identifier build(LocationalToken token) throws ParserException {
-            if(!token.getTokenType().equals(Token.Type.ID)) {
-                throw new ParserException(token, ParserException.ErrorCode.ID_EXPECTED);
-            }
+            ParserException.verify(Token.Type.ID, token);
             return new Identifier(token.getTokenData().get());
         }
     }
