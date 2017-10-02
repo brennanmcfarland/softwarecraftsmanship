@@ -1,6 +1,5 @@
 package softwarecraftsmanship.assignment3;
 
-import javax.xml.stream.Location;
 import java.util.*;
 
 public class CompoundFactor implements Factor {
@@ -22,9 +21,15 @@ public class CompoundFactor implements Factor {
                     Token.Type.AND,
                     Token.Type.CLOSE
             ));
-            //so iterate over the tokens to get the two expressions and verify the correct operators from the above list
+            return buildFromTypeList(expectedOperatorSequence, token, lexer);
+        }
+
+        private static final CompoundFactor buildFromTypeList(LinkedList<Token.Type> expectedOperatorSequence,
+                                                              LocationalToken token, DisjunctiveLexer lexer)
+                throws ParserException {
             ArrayList<DisjunctiveExpression> expressions = new ArrayList<DisjunctiveExpression>(EXPRESSIONCOUNT);
             Optional<LocationalToken> currentTokenOptional = Optional.of(token);
+            //iterate over the tokens to get the two expressions' expressions and operators
             for(int expectedTypeIndex=0; expectedTypeIndex<=expectedOperatorSequence.size()+EXPRESSIONCOUNT;
                 expectedTypeIndex++) {
                 ParserException.verify(currentTokenOptional);
@@ -39,10 +44,10 @@ public class CompoundFactor implements Factor {
                 }
                 currentTokenOptional = lexer.nextValid();
             }
-            return buildFromList(expressions);
+            return buildFromExpressionList(expressions);
         }
 
-        private static final CompoundFactor buildFromList(List<DisjunctiveExpression> expressions)
+        private static final CompoundFactor buildFromExpressionList(List<DisjunctiveExpression> expressions)
                 throws ParserException {
             if(expressions.size() != EXPRESSIONCOUNT) {
                 throw new ParserException(ParserException.ErrorCode.ID_EXPECTED);
