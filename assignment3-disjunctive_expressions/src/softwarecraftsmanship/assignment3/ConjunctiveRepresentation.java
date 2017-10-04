@@ -13,4 +13,14 @@ final class ConjunctiveRepresentation {
     final String getRepresentation() { return representation; }
 
     final boolean getNegation() { return negation; }
+
+    @Override
+    public String toString() {
+        if(negation) {
+            return Token.Type.NOT.getPattern() + " " + representation;
+        }
+        else {
+            return representation;
+        }
+    }
 }

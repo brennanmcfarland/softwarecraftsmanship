@@ -1,8 +1,6 @@
 package softwarecraftsmanship.assignment3;
 
 
-import javax.swing.text.html.Option;
-import javax.xml.stream.Location;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.Optional;
