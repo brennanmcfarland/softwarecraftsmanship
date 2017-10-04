@@ -47,4 +47,34 @@ public final class DisjunctiveExpression {
     public final DisjunctiveExpression negate() {
         return new DisjunctiveExpression(factor, !positive);
     }
+
+    //gets the conjunctive representation, removing duplicate negatives if necessary
+    public final String conjunctiveRepresentation() {
+        ConjunctiveRepresentation factorConjunctiveRepresentation = factor.conjunctiveRepresentation();
+        StringBuilder conjunctiveRepresentationString = new StringBuilder();
+        //conjunctive is only negative if this is positive and the conjunctive representation is negative or vice versa
+        if(positive != factorConjunctiveRepresentation.getNegation()) {
+            conjunctiveRepresentationString.append(Token.Type.NOT.getPattern() + " ");
+        }
+        conjunctiveRepresentationString.append(factorConjunctiveRepresentation.getRepresentation());
+        return conjunctiveRepresentationString.toString();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        DisjunctiveExpression that = (DisjunctiveExpression) o;
+
+        if (positive != that.positive) return false;
+        return factor != null ? factor.equals(that.factor) : that.factor == null;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = factor != null ? factor.hashCode() : 0;
+        result = 31 * result + (positive ? 1 : 0);
+        return result;
+    }
 }

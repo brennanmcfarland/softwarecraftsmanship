@@ -57,6 +57,14 @@ public class CompoundFactor implements Factor {
     }
 
     @Override
+    public ConjunctiveRepresentation conjunctiveRepresentation() {
+        String leftConjunctiveRepresentation = leftExpression.conjunctiveRepresentation();
+        String rightConjunctiveRepresentation = rightExpression.conjunctiveRepresentation();
+        return new ConjunctiveRepresentation("(" + leftConjunctiveRepresentation + " "
+                + Token.Type.OR.getPattern() + " " + rightConjunctiveRepresentation + ")", true);
+    }
+
+    @Override
     public String toString() {
         return "CompoundFactor{" +
                 "leftExpression=" + leftExpression +
