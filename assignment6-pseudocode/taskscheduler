@@ -27,7 +27,7 @@ function initializeAssignments(assignments)
     assignment.end.parents ← ∅
 
 function makePrioritizedGraph(assignments)
-  nodes ← new min-on-top priority queue ordered by |assignment.parents|
+  nodes ← ∅
   for assignment in assignments
     for requirement in assignment.requirements
       if requirement is of type end-begin
@@ -41,7 +41,8 @@ function makePrioritizedGraph(assignments)
     add assignment.start to assignment.end.parents
     add assignment.start to nodes
     add assignment.end to nodes
-  return nodes
+  return heapify(nodes) as priority queue
+    prioritized by lowest |assignment.parents|
 
 function checkForCycle(nodes)
   if DFS(nodes) discovers backedge
