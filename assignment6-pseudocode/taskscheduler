@@ -1,0 +1,61 @@
+Algorithm taskScheduler(assignments)
+  Input: a set assignments of assignments, each with duration and a set
+    requirements of requirements, each of type end-begin, begin-begin, begin-end
+    or end-end and each with an associated assignment (other than the assignment
+    containing the set of requirements)
+  Output: estimated time to complete all assignments (delivery time) or a
+    circular requirement
+
+  initializeAssignments(assignments)
+  nodes ← makePrioritizedGraph(assignments)
+  cycle ← checkForCycle(nodes)
+  if cycle is not none
+    return cycle
+  totalTime ← 0
+  while nodes ≠ ∅
+    node ← pop from nodes
+    node.time ← getEarliestValidTime(node.parents)
+    totalTime ← max(totalTime, node.time+node.duration)
+  return totalTime
+
+function initializeAssignments(assignments)
+  for assignment in assignments
+    assignment.time ← 0
+    assignment.start.duration ← assignment.duration
+    assignment.end.duration ← 0
+    assignment.start.parents ← ∅
+    assignment.end.parents ← ∅
+
+function makePrioritizedGraph(assignments)
+  nodes ← new min-on-top priority queue ordered by |assignment.parents|
+  for assignment in assignments
+    for requirement in assignment.requirements
+      if requirement is of type end-begin
+        add requirement.assignment.end to assignment.start.parents
+      else if requirement is of type begin-begin
+        add requirement.assignment.start to assignment.start.parents
+      else if requirement is of type begin-end
+        add requirement.assignment.start to assignment.end.parents
+      else if requirement is of type end-end
+        add requirement.assignment.end to assignment.end.parents
+    add assignment.start to assignment.end.parents
+    add assignment.start to nodes
+    add assignment.end to nodes
+  return nodes
+
+function checkForCycle(nodes)
+  if DFS(nodes) discovers backedge
+    return backedge
+  else
+    return none
+
+function getEarliestValidTime(parents)
+  if parents = ∅
+    return 0
+  else
+    earliestValidTime ← parents[0].time + parents[0].duration
+    for i ← 1 to |earliestValidTime| -1
+      validTimeLowerBound ← parents[i].time + parents[i].duration
+      if validTimeLowerBound > earliestValidTime
+        earliestValidTime ← validTimeLowerBound
+    return earliestValidTime
