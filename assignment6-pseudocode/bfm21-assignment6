@@ -30,19 +30,23 @@ function makePrioritizedGraph(assignments)
   nodes ← ∅
   for assignment in assignments
     for requirement in assignment.requirements
-      if requirement is of type end-begin
-        add requirement.assignment.end to assignment.start.parents
-      else if requirement is of type begin-begin
-        add requirement.assignment.start to assignment.start.parents
-      else if requirement is of type begin-end
-        add requirement.assignment.start to assignment.end.parents
-      else if requirement is of type end-end
-        add requirement.assignment.end to assignment.end.parents
+      makeRequirementEdge(assignment, requirement)
     add assignment.start to assignment.end.parents
     add assignment.start to nodes
     add assignment.end to nodes
   return heapify(nodes) as priority queue
     prioritized by lowest |assignment.parents|
+
+
+function makeRequirementEdge(assignment, requirement)
+  if requirement is of type end-begin
+    add requirement.assignment.end to assignment.start.parents
+  else if requirement is of type begin-begin
+    add requirement.assignment.start to assignment.start.parents
+  else if requirement is of type begin-end
+    add requirement.assignment.start to assignment.end.parents
+  else if requirement is of type end-end
+    add requirement.assignment.end to assignment.end.parents
 
 function checkForCycle(nodes)
   if DFS(nodes) discovers backedge
