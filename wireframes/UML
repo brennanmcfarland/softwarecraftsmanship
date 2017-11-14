@@ -1,0 +1,7 @@
+@startuml
+Interface <|--Element
+
+Element : getTransform()
+Element : getScale()
+Element : getAnnotations()
+@enduml
