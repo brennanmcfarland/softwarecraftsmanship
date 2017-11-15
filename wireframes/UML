@@ -1,7 +1,205 @@
 @startuml
-Interface <|--Element
+Annotatable <|-- Group
+Transformable <|-- Group
+Annotatable <|-- Editable
+Alignable <|-- CannedText
+Alignable <|-- Annotation
+Scalable <|-- Transformable
+Scalable <|-- Annotation
+Element <|-- TextualElement
+Transformable <|-- Element
+Annotatable <|-- Element
+FractionalElement <|-- SliderElement
+FractionalElement <|-- ProgressBarElement
+FractionalElement <|-- ScrollBarElement
+Element <|-- ImageElement
+Element <|-- HeadlineElement
+TextualElement <|-- TextElement
+Element <|-- ParagraphElement
+Element <|-- SliderElement
+Element <|-- ComboBoxElement
+Element <|-- ProgressBarElement
+Element <|-- ListElement
+Element <|-- RoundedBoxElement
+Element <|-- ScrollBarElement
 
-Element : getTransform()
-Element : getScale()
-Element : getAnnotations()
+interface Transformable {
+  +Transform getTransform()
+}
+
+interface Scalable {
+  -Pair<int> scale
+
+  +Pair<int> getScale()
+  +void setScale(Pair<int>)
+}
+
+interface Annotatable {
+  +Collection<Annotation> getAnnotations()
+  ~void addAnnotation(Annotation annotation)
+  ~void removeAnnotation(Annotation annotation)
+  ~void removeAnnotation(int index)
+}
+
+interface Alignable {
+  +void align(Alignment alignment)
+}
+
+interface Element {
+  +getEditable()
+}
+
+interface TextualElement {
+  +CannedText getCannedText()
+}
+
+interface FractionalElement {
+  +void setValue(float value)
+  +float getValue()
+}
+
+enum Alignment {
+  LEFT RIGHT CENTER
+}
+
+class Pair<T> {
+  -T x
+  -T y
+
+  ~Pair(T x, T y)
+  ~T getX()
+  ~T getY()
+}
+
+class Annotation {
+  -Alignment alignment
+  -Pair<int> scale
+  -String text
+
+  ~Annotation()
+  ~Annotation(Alignment alignment)
+  ~void display()
+  ~void hide()
+  +String getText()
+  ~String setText()
+}
+
+class CannedText {
+  -String text
+  -Alignment alignment
+
+  ~CannedText(String text)
+  ~CannedText(String text, Alignment alignment)
+  +String getText()
+}
+
+class Transform {
+  -Pair<int> location
+  -Pair<int> scale
+  -Collection<Transform> children
+  -Transform parent
+  -bool isLocked
+
+  ~Transform(Transform parent)
+  ~void move(newX, newY)
+  +Pair<int> getGlobalLocation()
+  ~void lock()
+  ~void unlock()
+}
+
+class Group {
+  -Transform transform
+  -Collection<Editable> editables
+  -Collection<Annotation> annotations
+
+  ~Group(Transform transform, Collection<Editable> editables)
+  +getEditables()
+}
+
+class Editable {
+  -Transform transform
+  -Collection<Annotation> annotations
+
+  ~Editable(Transform transform)
+}
+
+class ErrorHandler {
+  ~void displayError(String message)
+}
+
+class ImageElement {
+  -Image image
+
+  ~ImageElement(Transform transform, Image image)
+  +Image getImage()
+}
+
+class HeadlineElement {
+  ~HeadlineElement(Transform transform)
+}
+
+class TextElement {
+  ~TextElement(Transform transform, String cannedText)
+}
+
+class ParagraphElement {
+  ~ParagraphElement(Transform transform)
+}
+
+class SliderElement {
+  -float value
+
+  ~SliderElement(Transform transform)
+  ~SliderElement(Transform transform, float value)
+}
+
+class ComboBoxElement {
+  -String[] possibleValues
+  -short valueIndex
+
+  ~ComboBox(Transform transform, String[] possibleValues)
+  ~ComboBox(Transform transform, String[] possibleValues, short initialValueIndex)
+  +String getValue()
+  ~void setValue()
+}
+
+class ProgressBarElement {
+  -float value
+
+  ~ProgressBarElement(Transform transform)
+  ~ProgressBarElement(Transform transform, float value)
+}
+
+class ListElement {
+  -int length
+
+  ~ListElement(Transform transform, int length)
+  ~void add()
+  ~void subtract()
+  ~void clear()
+}
+
+class RoundedBoxElement {
+  ~RoundedBoxElement(Transform transform)
+}
+
+class ScrollBarElement {
+  -float value
+
+  ~ScrollBarElement(Transform transform)
+  ~ScrollBarElement(Transform transform, float value)
+}
+
+class Wireframe {
+  -Collection<Transformable> transformables
+  -List<Transform> ordering
+
+  +add(Editable editable)
+  +remove(Editable editable)
+  +orderTransformAbove(Transform toBeAbove, Transform toBeBelow)
+  +orderTransformBelow(Transform toBeBelow, Transform toBeAbove)
+  +orderTransformToTop(Transform toBeOnTop)
+  +orderTransformToBottom(Transform toBeOnBottom)
+}
+
 @enduml
