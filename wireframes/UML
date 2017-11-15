@@ -1,4 +1,7 @@
 @startuml
+
+/''/
+
 Annotatable <|-- Group
 Transformable <|-- Group
 Annotatable <|-- Editable
@@ -6,30 +9,14 @@ Alignable <|-- CannedText
 Alignable <|-- Annotation
 Scalable <|-- Transformable
 Scalable <|-- Annotation
-Element <|-- TextualElement
 Transformable <|-- Element
 Annotatable <|-- Element
-FractionalElement <|-- SliderElement
-FractionalElement <|-- ProgressBarElement
-FractionalElement <|-- ScrollBarElement
-Element <|-- ImageElement
-Element <|-- HeadlineElement
-TextualElement <|-- TextElement
-Element <|-- ParagraphElement
-Element <|-- SliderElement
-Element <|-- ComboBoxElement
-Element <|-- ProgressBarElement
-Element <|-- ListElement
-Element <|-- RoundedBoxElement
-Element <|-- ScrollBarElement
 
 interface Transformable {
   +Transform getTransform()
 }
 
 interface Scalable {
-  -Pair<int> scale
-
   +Pair<int> getScale()
   +void setScale(Pair<int>)
 }
@@ -47,28 +34,6 @@ interface Alignable {
 
 interface Element {
   +getEditable()
-}
-
-interface TextualElement {
-  +CannedText getCannedText()
-}
-
-interface FractionalElement {
-  +void setValue(float value)
-  +float getValue()
-}
-
-enum Alignment {
-  LEFT RIGHT CENTER
-}
-
-class Pair<T> {
-  -T x
-  -T y
-
-  ~Pair(T x, T y)
-  ~T getX()
-  ~T getY()
 }
 
 class Annotation {
@@ -93,26 +58,11 @@ class CannedText {
   +String getText()
 }
 
-class Transform {
-  -Pair<int> location
-  -Pair<int> scale
-  -Collection<Transform> children
-  -Transform parent
-  -bool isLocked
-
-  ~Transform(Transform parent)
-  ~void move(newX, newY)
-  +Pair<int> getGlobalLocation()
-  ~void lock()
-  ~void unlock()
-}
-
 class Group {
-  -Transform transform
   -Collection<Editable> editables
-  -Collection<Annotation> annotations
 
   ~Group(Transform transform, Collection<Editable> editables)
+  +getEditable()
   +getEditables()
 }
 
@@ -123,8 +73,70 @@ class Editable {
   ~Editable(Transform transform)
 }
 
+/''/
+
+/''/
+enum Alignment {
+  LEFT RIGHT CENTER
+}
+
+class Pair<T> {
+  -T x
+  -T y
+
+  ~Pair(T x, T y)
+  ~T getX()
+  ~T getY()
+}
+
+class Transform {
+  -Pair<int> location
+  -Pair<int> scale
+  -Collection<Transform> children
+  -Transform parent
+  -Transform above
+  -Transform below
+  -bool isLocked
+
+  ~Transform(Transform parent)
+  ~void move(newX, newY)
+  ~void sendAbove(Transform other)
+  ~void sendBelow(Transform other)
+  ~void sendToTop()
+  ~void sendToBottom()
+  +Pair<int> getGlobalLocation()
+  ~void lock()
+  ~void unlock()
+}
+
 class ErrorHandler {
   ~void displayError(String message)
+  ~void displayFatalError(String message)
+}
+
+class Wireframe {
+  -Collection<Transformable> transformables
+
+  +add(Editable editable)
+  +remove(Editable editable)
+}
+
+/''/
+
+
+/''/
+
+Element <|-- ImageElement
+Element <|-- HeadlineElement
+TextualElement <|-- TextElement
+Element <|-- TextualElement
+Element <|-- ParagraphElement
+Element <|-- ComboBoxElement
+Element <|-- ListElement
+Element <|-- RoundedBoxElement
+
+interface TextualElement {
+  +CannedText getCannedText()
 }
 
 class ImageElement {
@@ -146,13 +158,6 @@ class ParagraphElement {
   ~ParagraphElement(Transform transform)
 }
 
-class SliderElement {
-  -float value
-
-  ~SliderElement(Transform transform)
-  ~SliderElement(Transform transform, float value)
-}
-
 class ComboBoxElement {
   -String[] possibleValues
   -short valueIndex
@@ -163,12 +168,44 @@ class ComboBoxElement {
   ~void setValue()
 }
 
+/''/
+/''/
+
+FractionalElement <|-- SliderElement
+FractionalElement <|-- ProgressBarElement
+FractionalElement <|-- ScrollBarElement
+Element <|-- SliderElement
+Element <|-- ProgressBarElement
+Element <|-- ScrollBarElement
+
+interface FractionalElement {
+  +void setValue(float value)
+  +float getValue()
+}
+
+class SliderElement {
+  -float value
+
+  ~SliderElement(Transform transform)
+  ~SliderElement(Transform transform, float value)
+}
+
 class ProgressBarElement {
   -float value
 
   ~ProgressBarElement(Transform transform)
   ~ProgressBarElement(Transform transform, float value)
 }
+
+class ScrollBarElement {
+  -float value
+
+  ~ScrollBarElement(Transform transform)
+  ~ScrollBarElement(Transform transform, float value)
+}
+
+/''/
+/''/
 
 class ListElement {
   -int length
@@ -183,23 +220,6 @@ class RoundedBoxElement {
   ~RoundedBoxElement(Transform transform)
 }
 
-class ScrollBarElement {
-  -float value
-
-  ~ScrollBarElement(Transform transform)
-  ~ScrollBarElement(Transform transform, float value)
-}
-
-class Wireframe {
-  -Collection<Transformable> transformables
-  -List<Transform> ordering
-
-  +add(Editable editable)
-  +remove(Editable editable)
-  +orderTransformAbove(Transform toBeAbove, Transform toBeBelow)
-  +orderTransformBelow(Transform toBeBelow, Transform toBeAbove)
-  +orderTransformToTop(Transform toBeOnTop)
-  +orderTransformToBottom(Transform toBeOnBottom)
-}
+/''/
 
 @enduml
