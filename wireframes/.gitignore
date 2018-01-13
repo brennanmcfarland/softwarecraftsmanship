@@ -1,0 +1,16 @@
+#pseudocode and UML documentation
+pseudocode
+*.png
+*.pdf
+*txt
+
+#IntelliJ project files
+
+.idea/*
+wireframes.iml
+
+#excluded directories
+report/*
+out/*
+build/*
+doc/*

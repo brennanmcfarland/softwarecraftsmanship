@@ -1,8 +1,7 @@
 @startuml
 
-/''/
 
-Annotatable <|-- Group
+
 Transformable <|-- Group
 Annotatable <|-- Editable
 Alignable <|-- CannedText
@@ -10,7 +9,6 @@ Alignable <|-- Annotation
 Scalable <|-- Transformable
 Scalable <|-- Annotation
 Transformable <|-- Element
-Annotatable <|-- Element
 
 interface Transformable {
   +Transform getTransform()
@@ -58,12 +56,16 @@ class CannedText {
   +String getText()
 }
 
+/'
+ungroup also "ungroups" the ordering LL so the ordering is not broken
+'/
 class Group {
   -Collection<Editable> editables
 
   ~Group(Transform transform, Collection<Editable> editables)
-  +getEditable()
-  +getEditables()
+  ~Collection<Editable> ungroup()
+  +Editable getEditable()
+  +Collection<Editable> getEditables()
 }
 
 class Editable {
@@ -73,9 +75,9 @@ class Editable {
   ~Editable(Transform transform)
 }
 
-/''/
 
-/''/
+
+
 enum Alignment {
   LEFT RIGHT CENTER
 }
@@ -89,24 +91,69 @@ class Pair<T> {
   ~T getY()
 }
 
+/' most of these only call the corresponding method in the LockableTransform '/
 class Transform {
-  -Pair<int> location
-  -Pair<int> scale
-  -Collection<Transform> children
-  -Transform parent
-  -Transform above
-  -Transform below
-  -bool isLocked
+  -LockableTransform lockableTransform
 
   ~Transform(Transform parent)
+  ~LockableTransform getLockableTransform()
   ~void move(newX, newY)
   ~void sendAbove(Transform other)
   ~void sendBelow(Transform other)
   ~void sendToTop()
   ~void sendToBottom()
+  +Optional<Transform> getAbove()
+  +Optional<Transform> getBelow()
+  ~void setAbove(Optional<Transform>)
+  ~void setBelow(Optional<Transform>)
+  +Optional<Transform> getParent()
+  +Pair<int> getLocalLocation()
   +Pair<int> getGlobalLocation()
   ~void lock()
   ~void unlock()
+}
+
+LockableTransform <|-- UnlockedTransform
+LockableTransform <|-- LockedTransform
+
+interface LockableTransform {
+  ~void move(newX, newY)
+  ~void sendAbove(Transform other)
+  ~void sendBelow(Transform other)
+  ~void sendToTop()
+  ~void sendToBottom()
+  +Optional<Transform> getAbove()
+  +Optional<Transform> getBelow()
+  +TransformData getTransformData()
+  +Optional<Transform> getParent()
+  +Pair<int> getLocalLocation()
+  +Pair<int> getGlobalLocation()
+  +Transform getTransform()
+}
+
+TransformData <|-- UnlockedTransform
+
+class UnlockedTransform {
+  ~UnlockedTransform(Transform parent)
+  ~UnlockedTransform(LockedTransform lockedTransform)
+}
+
+TransformData <|-- LockedTransform
+
+/' contains blank method implementations for all actions that are locked '/
+class LockedTransform {
+  ~LockedTransform(Transform parent)
+  ~LockedTransform(UnlockedTransform unlockedTransform)
+}
+
+/' abstract class '/
+class TransformData {
+  #Pair<int> location
+  #Pair<int> scale
+  #Collection<Transform> children
+  #Optional<Transform> parent
+  #Optional<Transform> above
+  #Optional<Transform> below
 }
 
 class ErrorHandler {
@@ -117,14 +164,16 @@ class ErrorHandler {
 class Wireframe {
   -Collection<Transformable> transformables
 
-  +add(Editable editable)
-  +remove(Editable editable)
+  +void add(Editable editable)
+  +void remove(Editable editable)
+  +void group(Collection<Editable> editables)
+  +void ungroup(Editable editable) /' checks if it's a group before ungrouping '/
 }
 
-/''/
 
 
-/''/
+
+
 
 Element <|-- ImageElement
 Element <|-- HeadlineElement
@@ -168,8 +217,8 @@ class ComboBoxElement {
   ~void setValue()
 }
 
-/''/
-/''/
+
+
 
 FractionalElement <|-- SliderElement
 FractionalElement <|-- ProgressBarElement
@@ -204,8 +253,8 @@ class ScrollBarElement {
   ~ScrollBarElement(Transform transform, float value)
 }
 
-/''/
-/''/
+
+
 
 class ListElement {
   -int length
@@ -220,6 +269,6 @@ class RoundedBoxElement {
   ~RoundedBoxElement(Transform transform)
 }
 
-/''/
+
 
 @enduml
